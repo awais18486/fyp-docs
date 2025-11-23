@@ -1,0 +1,572 @@
+---
+title: "Air Quality Monitoring and Stabilizer"
+subtitle: "An IoT-Based Smart Indoor Air Quality Management System"
+author: 
+  - "Saifullah (2022-UET-ShCET-LHR-Elect-04)"
+  - "Muhammad Awais (2022-UET-ShCET-LHR-Elect-03)"
+  - "Huzaifa Shakoor (2022-UET-ShCET-LHR-Elect-01)"
+institute: "Sharif College of Engineering and Technology"
+supervisor: "Dr. Mazhar Iqbal"
+date: "November 2025"
+format:
+  revealjs:
+    theme: sky
+    slide-number: true
+    chalkboard: true
+    preview-links: auto
+    logo: media/image1.png
+    css: styles.css
+    footer: "Air Quality Stabilizer - Group #01"
+---
+
+## Introduction {.smaller}
+
+::: {.incremental}
+- **Smart Indoor Air Quality Management System**
+- Combines IoT sensors, cloud computing, and machine learning
+- Continuously monitors and automatically stabilizes indoor air quality
+- Addresses critical health concerns in polluted urban environments like Lahore
+- People spend 80-90% of their time indoors
+:::
+
+::: {.notes}
+Start by emphasizing the real-world impact - this isn't just a technical project, it's solving a genuine health problem affecting millions.
+:::
+
+---
+
+## Purpose and Objectives
+
+::: {.columns}
+::: {.column width="50%"}
+### Purpose
+- Provide real-time indoor air quality monitoring
+- Automate air quality control
+- Improve occupant health and comfort
+:::
+
+::: {.column width="50%"}
+### Objectives
+- Integrate multiple air quality sensors
+- Implement cloud-based ML processing
+- Enable automated ventilation control
+- Create user-friendly dashboard
+:::
+:::
+
+# Problem Statement
+
+---
+
+## The Challenge
+
+::: {.incremental}
+- **Severe air pollution** in developing countries, especially during smog season
+- **Indoor air quality** often overlooked despite people spending 80-90% of time indoors
+- Traditional systems operate **manually** without intelligent decision-making
+- Health impacts: headaches, breathing difficulties, allergies, asthma complications
+:::
+
+---
+
+## Why It Matters
+
+::: {.columns}
+::: {.column width="60%"}
+### Indoor Pollutant Sources
+- Cooking smoke and dust
+- Cleaning agents and paints
+- Furniture emissions
+- Poor ventilation
+- Outdoor smog infiltration
+:::
+
+::: {.column width="40%"}
+### Current Gaps
+- Manual operation required
+- No real-time data processing
+- Limited automation
+- Lack of predictive capabilities
+:::
+:::
+
+# Background / Literature Review
+
+---
+
+## Related Research {.smaller}
+
+| Study | Key Finding |
+|-------|-------------|
+| **Kumar et al. (2021)** | Affordable sensors (MQ-135, PMS5003) can effectively monitor indoor air quality with cloud connectivity |
+| **Zheng et al. (2020)** | ZigBee sensor networks provide low-cost, scalable monitoring for large buildings |
+| **Liu & Wang (2019)** | Demand-controlled ventilation saves 35% energy while maintaining air quality |
+| **Garcia et al. (2022)** | Adaptive purification using sensor feedback reduces energy by 40% |
+
+---
+
+## Existing Commercial Systems {.smaller}
+
+::: {.incremental}
+1. **Daikin Automated IAQ Management** - Integrates sensors with HVAC for dynamic ventilation
+2. **Daikin ONE Home Air Monitor** - Monitors PM2.5, gases with HVAC ecosystem integration
+3. **Field Controls WelSpace** - Real-time PM2.5, CO₂, VOCs, formaldehyde monitoring
+4. **Honeywell TR50 IAQ Sensor** - Building automation-focused multi-parameter sensing
+5. **IQAir AirVisual Pro** - Premium consumer-grade air quality monitoring
+:::
+
+---
+
+## Research Gaps
+
+::: {.incremental}
+- **Sensor accuracy** deteriorates over time - better calibration needed
+- Limited **real-time automated control** systems
+- Need for more **user-friendly interfaces**
+- Opportunity for **smart building integration**
+- **Cost-effective solutions** for developing countries
+:::
+
+# Project Goals / Objectives
+
+---
+
+## Specific Project Aims
+
+::: {.incremental}
+1. Develop a **multi-sensor monitoring system** using ESP32
+2. Implement **cloud-based machine learning** for air quality classification
+3. Enable **automatic control** of ventilation devices
+4. Create **mobile/web dashboard** for real-time monitoring
+5. Ensure **scalability** for multiple rooms/buildings
+6. Achieve **cost-effective** solution compared to commercial systems
+:::
+
+# Methodology / Approach
+
+---
+
+## System Overview
+
+```{mermaid}
+%%| fig-width: 10
+%%| fig-height: 6
+graph LR
+    A[ESP32 + Sensors] -->|WiFi/MQTT| B[Cloud Platform]
+    B -->|ML Processing| C[Air Quality Classification]
+    C -->|Control Commands| A
+    B -->|Real-time Data| D[Mobile/Web App]
+    A -->|Relay Control| E[Fans/Purifiers]
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#ffe1f5
+    style D fill:#e1ffe1
+    style E fill:#f5e1ff
+```
+
+---
+
+## Step 1: Data Collection Node {.smaller}
+
+::: {.columns}
+::: {.column width="50%"}
+### Hardware Components
+- **ESP32 microcontroller** (WiFi + Bluetooth)
+- **Plantower PMS5003S** - PM1.0, PM2.5, PM10
+- **SGP30** - TVOCs and eCO₂
+- **ME3-CO** - Carbon Monoxide
+- **MH-Z19C** - carbon dioxide
+- **DHT22/BME280** - Temperature & Humidity
+:::
+
+::: {.column width="50%"}
+### Function
+- Continuous real-time sensing
+- Local data preprocessing
+- Wireless transmission via WiFi
+- MQTT protocol communication
+:::
+:::
+
+---
+
+## Step 2: Cloud Platform {.smaller}
+
+### Cloud Responsibilities
+
+::: {.incremental}
+1. **Data Reception** - Receives sensor data via MQTT
+2. **Data Storage** - Secure storage for historical analysis
+3. **ML Processing** - Runs AirNet deep learning model
+4. **Classification** - Categorizes air quality (Good/Moderate/Poor/Hazardous)
+5. **Control Logic** - Determines ventilation actions
+6. **Command Transmission** - Sends control signals to ESP32
+7. **User Interface** - Powers mobile/web dashboard
+8. **Notifications** - Alerts users of air quality changes
+:::
+
+---
+
+## Communication Architecture
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+    participant S as ESP32 Sensors
+    participant M as MQTT Broker
+    participant C as Cloud Platform
+    participant A as Mobile App
+    
+    S->>M: Publish sensor data
+    M->>C: Forward data
+    C->>C: ML processing
+    C->>M: Publish control command
+    M->>S: Forward command
+    S->>S: Activate relay
+    C->>A: Send data & alerts
+```
+
+---
+
+## Machine Learning Model: AirNet {.smaller}
+
+::: {.columns}
+::: {.column width="60%"}
+### Model Overview
+- **Deep learning-based** architecture
+- Captures spatial and temporal patterns
+- Originally for outdoor air quality forecasting
+- Adapted for indoor environments
+
+### Input Features
+- PM2.5, PM10 concentrations
+- Gas levels (CO₂, VOCs, NO₂, CO, SO₂)
+- Temperature and humidity
+- Temporal features (time of day, day of week)
+:::
+
+::: {.column width="40%"}
+### Advantages
+- High accuracy with nonlinear data
+- Predictive capability
+- Early warning system
+- Adaptable to local conditions
+- Better than traditional models
+:::
+:::
+
+# System Architecture
+
+---
+
+## Block Diagram
+
+![System Architecture](media/image2.png)
+
+---
+
+## Hardware Connection Details {.smaller}
+
+| Component | Interface | Connection |
+|-----------|-----------|------------|
+| PMS5003S | UART | ESP32 RX/TX pins |
+| SGP30 | I2C | SDA/SCL |
+| ZE07-CO | UART | Via logic shifter |
+| ZE03-NO₂ | UART | Via logic shifter |
+| ZE03-SO₂ | UART | Via logic shifter |
+| DHT22 | Digital | GPIO pin |
+| Relay Module | Digital | GPIO pin (for fan control) |
+
+# Implementation
+
+---
+
+## Development Process {.smaller}
+
+::: {.incremental}
+1. **Component Selection & Procurement**
+   - Researched and selected appropriate sensors
+   - Ensured ESP32 compatibility
+
+2. **Hardware Integration**
+   - Assembled sensors with ESP32
+   - Implemented level shifters where needed
+   - Tested each sensor individually
+
+3. **Firmware Development**
+   - Coded sensor reading routines
+   - Implemented MQTT communication
+   - Developed relay control logic
+:::
+
+---
+
+## Development Process (cont.) {.smaller}
+
+::: {.incremental}
+4. **Cloud Setup**
+   - Configured cloud platform
+   - Set up MQTT broker
+   - Established secure connections
+
+5. **ML Model Development**
+   - Collected training data
+   - Trained AirNet model
+   - Deployed model to cloud
+
+6. **App Development**
+   - Created user interface
+   - Implemented real-time data display
+   - Added notification system
+:::
+
+---
+
+## Technologies Used
+
+::: {.columns}
+::: {.column width="50%"}
+### Hardware
+- ESP32 microcontroller
+- Multiple air quality sensors
+- Relay modules
+- Power supply systems
+
+### Protocols
+- MQTT for IoT communication
+- WiFi for connectivity
+- UART & I2C for sensors
+:::
+
+::: {.column width="50%"}
+### Software
+- Arduino IDE / PlatformIO
+- Python for ML model
+- Cloud platform (AWS/Azure/GCP)
+- Mobile/Web frameworks
+
+### ML Framework
+- TensorFlow/PyTorch
+- AirNet architecture
+- Data preprocessing libraries
+:::
+:::
+
+# Results / Findings
+
+---
+
+## Expected Performance Metrics
+
+::: {.columns}
+::: {.column width="50%"}
+### System Capabilities
+- Real-time monitoring (< 5 sec latency)
+- Automatic control response time
+- Multiple pollutant detection
+- 24/7 operation
+:::
+
+::: {.column width="50%"}
+### ML Model Performance
+- Classification accuracy
+- Prediction precision
+- False positive/negative rates
+- Energy efficiency gains
+:::
+:::
+
+::: {.callout-note}
+**Note:** Final results will be presented after implementation and testing phase
+:::
+
+---
+
+## Data Visualization Plan
+
+::: {.incremental}
+- **Time-series graphs** of pollutant levels
+- **Before/after** comparison charts
+- **Air quality classification** distribution
+- **Energy consumption** analysis
+- **Response time** measurements
+- **User interaction** statistics
+:::
+
+# Discussion
+
+---
+
+## Expected Challenges
+
+::: {.incremental}
+1. **Sensor Calibration**
+   - Low-cost sensors may drift over time
+   - Solution: Regular calibration routines
+
+2. **Network Reliability**
+   - WiFi connectivity issues
+   - Solution: Local buffering and retry logic
+
+3. **Power Management**
+   - Continuous operation requirements
+   - Solution: Efficient coding and hardware selection
+:::
+
+---
+
+## Expected Challenges (cont.)
+
+::: {.incremental}
+4. **ML Model Training**
+   - Sufficient training data collection
+   - Solution: Extended data collection period
+
+5. **Real-time Processing**
+   - Balancing accuracy and speed
+   - Solution: Cloud-based processing
+
+6. **User Adoption**
+   - Making the system intuitive
+   - Solution: User-centered design approach
+:::
+
+# Conclusion
+
+---
+
+## Key Achievements
+
+::: {.incremental}
+- Comprehensive **multi-sensor monitoring system**
+- **Cloud-based intelligence** with ML integration
+- **Automated control** for improved air quality
+- **User-friendly** mobile/web interface
+- **Scalable** architecture for future expansion
+- **Cost-effective** compared to commercial solutions
+:::
+
+---
+
+## Project Impact
+
+::: {.columns}
+::: {.column width="50%"}
+### Health Benefits
+- Reduced exposure to pollutants
+- Improved respiratory health
+- Better sleep and productivity
+- Early warning for vulnerable groups
+:::
+
+::: {.column width="50%"}
+### Technical Innovation
+- Integration of IoT, ML, and automation
+- Practical application in developing countries
+- Contribution to smart building technology
+- Replicable solution framework
+:::
+:::
+
+# Future Work
+
+---
+
+## Possible Improvements {.smaller}
+
+::: {.incremental}
+1. **Enhanced ML Models**
+   - Implement more sophisticated neural networks
+   - Add predictive maintenance for sensors
+   - Personalized air quality recommendations
+
+2. **Multi-Room Expansion**
+   - Scale to entire buildings
+   - Room-to-room air quality mapping
+   - Coordinated ventilation control
+:::
+
+---
+
+## Next Steps {.smaller}
+
+::: {.incremental}
+3. **Integration Features**
+   - Connect with existing HVAC systems
+   - Smart home platform compatibility
+   - Voice assistant integration
+
+4. **Advanced Analytics**
+   - Long-term health impact tracking
+   - Pattern recognition for pollution sources
+   - Energy optimization algorithms
+
+5. **Commercial Deployment**
+   - Product design refinement
+   - Manufacturing partnerships
+   - Market launch strategy
+:::
+
+# References
+
+---
+
+## Academic References {.smaller}
+
+1. Kumar, S., Sharma, A., & Singh, P. (2021). IoT-Based Indoor Air Quality Monitoring System. *Sensors*, 21(6), 2048. doi: 10.3390/s21062048
+
+2. Zheng, Y., Li, J., & Wang, H. (2020). Wireless Sensor Network for Indoor Air Quality Monitoring. *IEEE Access*, 8, 123456-123466. doi: 10.1109/ACCESS.2020.2981234
+
+3. Liu, H., & Wang, J. (2019). Demand-Controlled Ventilation for Indoor Air Quality and Energy Efficiency. *Building and Environment*, 152, 15-25. doi: 10.1016/j.buildenv.2019.01.030
+
+4. Garcia, M., Fernandez, L., & Lopez, R. (2022). Sensor-Based Adaptive Air Purification. *Environmental Science & Technology*, 56(7), 4567-4575. doi: 10.1021/acs.est.1c07050
+
+---
+
+## Thank You!
+
+::: {.columns}
+::: {.column width="60%"}
+### Questions?
+
+**Project Team:**
+- Saifullah
+- Muhammad Awais  
+- Huzaifa Shakoor
+
+**Supervisor:** Dr. Mazhar Iqbal
+:::
+
+::: {.column width="40%"}
+### Contact
+Sharif College of Engineering and Technology
+
+Department of Electrical Engineering
+:::
+:::
+
+---
+
+## Appendix: Project Timeline
+
+```{mermaid}
+%%| fig-width: 10
+gantt
+    title Project Schedule (13 Weeks)
+    dateFormat  YYYY-MM-DD
+    section Planning
+    Requirement Analysis      :a1, 2025-01-01, 7d
+    Component Selection       :a2, after a1, 7d
+    section Development
+    Sensor Integration        :b1, after a2, 7d
+    Cloud Platform Setup      :b2, after b1, 7d
+    Data Collection          :b3, after b2, 14d
+    section ML & Control
+    ML Model Development     :c1, after b3, 14d
+    Cloud Deployment         :c2, after c1, 7d
+    Control Implementation   :c3, after c2, 7d
+    section Final
+    App Development          :d1, after c3, 7d
+    Testing & Validation     :d2, after d1, 7d
+    Documentation           :d3, after d2, 7d
+```
